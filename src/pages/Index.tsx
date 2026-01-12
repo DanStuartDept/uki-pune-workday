@@ -24,7 +24,7 @@ const Dashboard = () => {
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
         <header className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl mb-2">Timezone Glance</h1>
+          <h1 className="text-3xl md:text-4xl mb-2">UKI & Pune Workday</h1>
           <p className="text-muted-foreground">{offsetInfo.text}</p>
         </header>
 

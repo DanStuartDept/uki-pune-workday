@@ -145,16 +145,15 @@ export const useTimezone = () => {
     return { hours, minutes, text };
   }, [puneTime, irelandTime]);
 
-  const puneProgress: ProgressInfo = useMemo(() => {
-    const schedule = settings.puneSchedule;
+  const calculateProgress = (time: Date, schedule: WorkSchedule): ProgressInfo => {
     const startMinutes = parseTimeToMinutes(schedule.startTime);
     const lunchStartMinutes = parseTimeToMinutes(schedule.lunchStart);
     const lunchEndMinutes = parseTimeToMinutes(schedule.lunchEnd);
     const endMinutes = parseTimeToMinutes(schedule.endTime);
     const totalWorkMinutes = endMinutes - startMinutes;
     
-    const currentHours = puneTime.getHours();
-    const currentMins = puneTime.getMinutes();
+    const currentHours = time.getHours();
+    const currentMins = time.getMinutes();
     const currentMinutes = currentHours * 60 + currentMins;
     
     const lunchStartPercent = ((lunchStartMinutes - startMinutes) / totalWorkMinutes) * 100;
@@ -201,7 +200,17 @@ export const useTimezone = () => {
       lunchStartPercent,
       lunchEndPercent,
     };
-  }, [puneTime, settings.puneSchedule]);
+  };
+
+  const irelandProgress: ProgressInfo = useMemo(() => 
+    calculateProgress(irelandTime, settings.irelandSchedule), 
+    [irelandTime, settings.irelandSchedule]
+  );
+
+  const puneProgress: ProgressInfo = useMemo(() => 
+    calculateProgress(puneTime, settings.puneSchedule), 
+    [puneTime, settings.puneSchedule]
+  );
 
   const overlapInfo: OverlapInfo = useMemo(() => {
     const irelandSchedule = settings.irelandSchedule;
@@ -323,6 +332,7 @@ export const useTimezone = () => {
     irelandInfo,
     puneInfo,
     offsetInfo,
+    irelandProgress,
     puneProgress,
     overlapInfo,
     messageIndicator,

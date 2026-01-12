@@ -93,22 +93,7 @@ const formatDuration = (totalMinutes: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
-  const getDayIndicator = (localDate: Date, referenceDate: Date): string => {
-    const localDay = format(localDate, 'yyyy-MM-dd');
-    const refDay = format(referenceDate, 'yyyy-MM-dd');
-    
-    if (localDay === refDay) return 'Today';
-    
-    const refTomorrow = format(addDays(referenceDate, 1), 'yyyy-MM-dd');
-    if (localDay === refTomorrow) return 'Tomorrow';
-    
-    const refYesterday = format(addDays(referenceDate, -1), 'yyyy-MM-dd');
-    if (localDay === refYesterday) return 'Yesterday';
-    
-    return 'Today';
-  }, []);
-
-  const calculateProgress = (time: Date, schedule: WorkSchedule): ProgressInfo => {
+const calculateProgress = (time: Date, schedule: WorkSchedule): ProgressInfo => {
     const startMinutes = parseTimeToMinutes(schedule.startTime);
     const lunchStartMinutes = parseTimeToMinutes(schedule.lunchStart);
     const lunchEndMinutes = parseTimeToMinutes(schedule.lunchEnd);
@@ -187,6 +172,21 @@ export const useTimezone = () => {
     return settings.showSeconds ? format(date, 'hh:mm:ss a') : format(date, 'hh:mm a');
   }, [settings.use24Hour, settings.showSeconds]);
 
+  const getDayIndicator = useCallback((localDate: Date, referenceDate: Date): string => {
+    const localDay = format(localDate, 'yyyy-MM-dd');
+    const refDay = format(referenceDate, 'yyyy-MM-dd');
+    
+    if (localDay === refDay) return 'Today';
+    
+    const refTomorrow = format(addDays(referenceDate, 1), 'yyyy-MM-dd');
+    if (localDay === refTomorrow) return 'Tomorrow';
+    
+    const refYesterday = format(addDays(referenceDate, -1), 'yyyy-MM-dd');
+    if (localDay === refYesterday) return 'Yesterday';
+    
+    return 'Today';
+  }, []);
+
   const irelandInfo: TimeInfo = useMemo(() => ({
     time: irelandTime,
     formattedTime: formatTimeDisplay(irelandTime),
@@ -201,7 +201,7 @@ export const useTimezone = () => {
     formattedDate: format(puneTime, 'EEEE, dd MMM'),
     dayIndicator: getDayIndicator(puneTime, irelandTime),
     status: getWorkStatus(puneTime, settings.puneSchedule),
-  }), [puneTime, irelandTime, settings.puneSchedule, formatTimeDisplay]);
+  }), [puneTime, irelandTime, formatTimeDisplay, getDayIndicator, settings.puneSchedule]);
 
   const offsetInfo: OffsetInfo = useMemo(() => {
     const diffMinutes = differenceInMinutes(puneTime, irelandTime);

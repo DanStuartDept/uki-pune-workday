@@ -6,6 +6,10 @@ import { OverlapIndicator } from '@/components/OverlapIndicator';
 import { MessageIndicator } from '@/components/MessageIndicator';
 import { SettingsPanel } from '@/components/SettingsPanel';
 
+/**
+ * Internal dashboard component containing the main UI layout
+ * Assembles all timezone information displays and controls
+ */
 const Dashboard = () => {
   const {
     irelandInfo,
@@ -83,6 +87,10 @@ const Dashboard = () => {
   );
 };
 
+/**
+ * Main page component for the timezone comparison application
+ * Wraps Dashboard with SettingsProvider context
+ */
 const Index = () => {
   return (
     <SettingsProvider>

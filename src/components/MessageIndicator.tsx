@@ -11,6 +11,11 @@ const typeStyles = {
   info: 'bg-muted text-muted-foreground',
 };
 
+/**
+ * Displays a status message banner indicating messaging availability
+ * @param text - Message text to display
+ * @param type - Message type determining the color scheme
+ */
 export const MessageIndicator = ({ text, type }: MessageIndicatorProps) => {
   return (
     <div className={cn(

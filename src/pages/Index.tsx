@@ -31,14 +31,14 @@ const Dashboard = () => {
         {/* Time Cards */}
         <div className="grid md:grid-cols-2 gap-6">
           <TimeCard
-            location="IRELAND"
+            location="UKI"
             time={irelandInfo.formattedTime}
             date={irelandInfo.formattedDate}
             dayIndicator={irelandInfo.dayIndicator}
             status={irelandInfo.status}
           />
           <TimeCard
-            location="PUNE"
+            location="PUNE, INDIA"
             time={puneInfo.formattedTime}
             date={puneInfo.formattedDate}
             dayIndicator={puneInfo.dayIndicator}

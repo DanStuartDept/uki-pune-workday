@@ -5,7 +5,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: "/uki-pune-workday/",
+  base: mode === "development" ? "/" : "/uki-pune-workday/",
   server: {
     host: "::",
     port: 8080,

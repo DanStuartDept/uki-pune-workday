@@ -137,9 +137,9 @@ export const useTimezone = () => {
     
     let text = '';
     if (minutes === 0) {
-      text = `Pune is ${hours} hour${hours !== 1 ? 's' : ''} ahead of Ireland`;
+      text = `Pune is ${hours} hour${hours !== 1 ? 's' : ''} ahead of UKI`;
     } else {
-      text = `Pune is ${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''} ahead of Ireland`;
+      text = `Pune is ${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''} ahead of UKI`;
     }
     
     return { hours, minutes, text };
@@ -279,7 +279,7 @@ export const useTimezone = () => {
       message = 'Overlap today';
     } else if (periods.length > 0) {
       message = 'No overlap remaining today';
-      nextOverlapMessage = `Next overlap: tomorrow ${periods[0].irelandStart} to ${periods[0].irelandEnd} Ireland time`;
+      nextOverlapMessage = `Next overlap: tomorrow ${periods[0].irelandStart} to ${periods[0].irelandEnd} UKI time`;
     } else {
       message = 'No overlap today';
     }

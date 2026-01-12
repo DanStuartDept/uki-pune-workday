@@ -108,11 +108,7 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-/**
- * Hook to access and update application settings
- * @throws Error if used outside of SettingsProvider
- * @returns Settings context with current settings and update functions
- */
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSettings = () => {
   const context = useContext(SettingsContext);
   if (context === undefined) {

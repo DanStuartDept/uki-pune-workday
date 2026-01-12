@@ -23,7 +23,7 @@ export const ProgressBar = ({
 }: ProgressBarProps) => {
   const { settings } = useSettings();
   const schedule = location === 'ireland' ? settings.irelandSchedule : settings.puneSchedule;
-  const title = location === 'ireland' ? 'Ireland Workday Progress' : 'Pune Workday Progress';
+  const title = location === 'ireland' ? 'UKI Workday Progress' : 'Pune, India Workday Progress';
 
   return (
     <div className="w-full p-6 border border-border rounded-lg bg-card">

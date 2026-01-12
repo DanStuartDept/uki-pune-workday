@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { format, differenceInMinutes, differenceInSeconds, addDays, isToday, isTomorrow, isYesterday } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { useSettings, WorkSchedule } from '@/contexts/SettingsContext';
@@ -77,6 +77,12 @@ const formatDuration = (totalMinutes: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
+const formatMinutesToTimeString = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+};
+
 export const useTimezone = () => {
   const { settings } = useSettings();
   const [now, setNow] = useState(new Date());
@@ -92,12 +98,12 @@ export const useTimezone = () => {
   const irelandTime = useMemo(() => toZonedTime(now, IRELAND_TZ), [now]);
   const puneTime = useMemo(() => toZonedTime(now, PUNE_TZ), [now]);
 
-  const formatTimeDisplay = (date: Date): string => {
+  const formatTimeDisplay = useCallback((date: Date): string => {
     if (settings.use24Hour) {
       return settings.showSeconds ? format(date, 'HH:mm:ss') : format(date, 'HH:mm');
     }
     return settings.showSeconds ? format(date, 'hh:mm:ss a') : format(date, 'hh:mm a');
-  };
+  }, [settings.use24Hour, settings.showSeconds]);
 
   const getDayIndicator = (localDate: Date, referenceDate: Date): string => {
     const localDay = format(localDate, 'yyyy-MM-dd');
@@ -120,7 +126,7 @@ export const useTimezone = () => {
     formattedDate: format(irelandTime, 'EEEE, dd MMM'),
     dayIndicator: 'Today',
     status: getWorkStatus(irelandTime, settings.irelandSchedule),
-  }), [irelandTime, settings.use24Hour, settings.showSeconds, settings.irelandSchedule]);
+  }), [irelandTime, formatTimeDisplay, settings.irelandSchedule]);
 
   const puneInfo: TimeInfo = useMemo(() => ({
     time: puneTime,
@@ -128,7 +134,7 @@ export const useTimezone = () => {
     formattedDate: format(puneTime, 'EEEE, dd MMM'),
     dayIndicator: getDayIndicator(puneTime, irelandTime),
     status: getWorkStatus(puneTime, settings.puneSchedule),
-  }), [puneTime, irelandTime, settings.use24Hour, settings.showSeconds, settings.puneSchedule]);
+  }), [puneTime, irelandTime, formatTimeDisplay, settings.puneSchedule]);
 
   const offsetInfo: OffsetInfo = useMemo(() => {
     const diffMinutes = differenceInMinutes(puneTime, irelandTime);
@@ -251,18 +257,11 @@ export const useTimezone = () => {
         const overlapEnd = Math.min(irBlock.end, puBlock.end);
         
         if (overlapStart < overlapEnd) {
-          const irStartStr = `${String(Math.floor(overlapStart / 60)).padStart(2, '0')}:${String(overlapStart % 60).padStart(2, '0')}`;
-          const irEndStr = `${String(Math.floor(overlapEnd / 60)).padStart(2, '0')}:${String(overlapEnd % 60).padStart(2, '0')}`;
-          const puStartMins = overlapStart + offsetMins;
-          const puEndMins = overlapEnd + offsetMins;
-          const puStartStr = `${String(Math.floor(puStartMins / 60)).padStart(2, '0')}:${String(puStartMins % 60).padStart(2, '0')}`;
-          const puEndStr = `${String(Math.floor(puEndMins / 60)).padStart(2, '0')}:${String(puEndMins % 60).padStart(2, '0')}`;
-          
           periods.push({
-            irelandStart: irStartStr,
-            irelandEnd: irEndStr,
-            puneStart: puStartStr,
-            puneEnd: puEndStr,
+            irelandStart: formatMinutesToTimeString(overlapStart),
+            irelandEnd: formatMinutesToTimeString(overlapEnd),
+            puneStart: formatMinutesToTimeString(overlapStart + offsetMins),
+            puneEnd: formatMinutesToTimeString(overlapEnd + offsetMins),
           });
         }
       }

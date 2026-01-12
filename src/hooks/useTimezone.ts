@@ -46,11 +46,22 @@ interface OverlapInfo {
   nextOverlapMessage?: string;
 }
 
+/**
+ * Parses a time string (HH:mm) and converts it to total minutes since midnight
+ * @param timeStr - Time string in HH:mm format
+ * @returns Total minutes since midnight
+ */
 const parseTimeToMinutes = (timeStr: string): number => {
   const [hours, minutes] = timeStr.split(':').map(Number);
   return hours * 60 + minutes;
 };
 
+/**
+ * Determines the current work status based on the time and work schedule
+ * @param date - The current date/time to check
+ * @param schedule - The work schedule configuration
+ * @returns Current work status
+ */
 const getWorkStatus = (date: Date, schedule: WorkSchedule): WorkStatus => {
   const hours = date.getHours();
   const minutes = date.getMinutes();
@@ -68,6 +79,11 @@ const getWorkStatus = (date: Date, schedule: WorkSchedule): WorkStatus => {
   return 'after-work';
 };
 
+/**
+ * Formats a duration in minutes to a human-readable string
+ * @param totalMinutes - Duration in minutes
+ * @returns Formatted duration string (e.g., "2h 30m", "45m", "3h")
+ */
 const formatDuration = (totalMinutes: number): string => {
   const hours = Math.floor(Math.abs(totalMinutes) / 60);
   const minutes = Math.abs(totalMinutes) % 60;
@@ -77,12 +93,22 @@ const formatDuration = (totalMinutes: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
+/**
+ * Converts minutes since midnight to a time string (HH:mm)
+ * @param minutes - Minutes since midnight
+ * @returns Time string in HH:mm format
+ */
 const formatMinutesToTimeString = (minutes: number): string => {
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
   return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
 };
 
+/**
+ * Custom hook that provides timezone-aware information for UKI and Pune locations
+ * Calculates current times, work progress, overlap periods, and messaging indicators
+ * @returns Object containing timezone information for both locations
+ */
 export const useTimezone = () => {
   const { settings } = useSettings();
   const [now, setNow] = useState(new Date());
@@ -105,7 +131,7 @@ export const useTimezone = () => {
     return settings.showSeconds ? format(date, 'hh:mm:ss a') : format(date, 'hh:mm a');
   }, [settings.use24Hour, settings.showSeconds]);
 
-  const getDayIndicator = (localDate: Date, referenceDate: Date): string => {
+  const getDayIndicator = useCallback((localDate: Date, referenceDate: Date): string => {
     const localDay = format(localDate, 'yyyy-MM-dd');
     const refDay = format(referenceDate, 'yyyy-MM-dd');
     
@@ -118,7 +144,7 @@ export const useTimezone = () => {
     if (localDay === refYesterday) return 'Yesterday';
     
     return 'Today';
-  };
+  }, []);
 
   const irelandInfo: TimeInfo = useMemo(() => ({
     time: irelandTime,
@@ -134,7 +160,7 @@ export const useTimezone = () => {
     formattedDate: format(puneTime, 'EEEE, dd MMM'),
     dayIndicator: getDayIndicator(puneTime, irelandTime),
     status: getWorkStatus(puneTime, settings.puneSchedule),
-  }), [puneTime, irelandTime, formatTimeDisplay, settings.puneSchedule]);
+  }), [puneTime, irelandTime, formatTimeDisplay, getDayIndicator, settings.puneSchedule]);
 
   const offsetInfo: OffsetInfo = useMemo(() => {
     const diffMinutes = differenceInMinutes(puneTime, irelandTime);

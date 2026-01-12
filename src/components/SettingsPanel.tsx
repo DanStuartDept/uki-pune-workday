@@ -80,7 +80,7 @@ export const SettingsPanel = () => {
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="fixed top-4 right-4">
+        <Button variant="outline" size="icon" className="fixed top-4 right-4" aria-label="Open settings">
           <Settings className="h-4 w-4" />
         </Button>
       </SheetTrigger>

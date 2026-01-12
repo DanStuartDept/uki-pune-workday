@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
+/**
+ * Work schedule configuration for a location
+ */
 export interface WorkSchedule {
   startTime: string;
   lunchStart: string;
@@ -7,6 +10,9 @@ export interface WorkSchedule {
   endTime: string;
 }
 
+/**
+ * Application settings configuration
+ */
 export interface Settings {
   irelandSchedule: WorkSchedule;
   puneSchedule: WorkSchedule;
@@ -44,6 +50,10 @@ interface SettingsContextType {
 
 const SettingsContext = createContext<SettingsContextType | undefined>(undefined);
 
+/**
+ * Settings context provider that manages application settings with localStorage persistence
+ * @param children - React children to be wrapped by the provider
+ */
 export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   const [settings, setSettings] = useState<Settings>(() => {
     const stored = localStorage.getItem('timezone-glance-settings');
@@ -98,6 +108,11 @@ export const SettingsProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
+/**
+ * Hook to access and update application settings
+ * @throws Error if used outside of SettingsProvider
+ * @returns Settings context with current settings and update functions
+ */
 export const useSettings = () => {
   const context = useContext(SettingsContext);
   if (context === undefined) {

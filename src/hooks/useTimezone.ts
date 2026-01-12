@@ -46,11 +46,22 @@ interface OverlapInfo {
   nextOverlapMessage?: string;
 }
 
+/**
+ * Parses a time string (HH:mm) and converts it to total minutes since midnight
+ * @param timeStr - Time string in HH:mm format
+ * @returns Total minutes since midnight
+ */
 const parseTimeToMinutes = (timeStr: string): number => {
   const [hours, minutes] = timeStr.split(':').map(Number);
   return hours * 60 + minutes;
 };
 
+/**
+ * Determines the current work status based on the time and work schedule
+ * @param date - The current date/time to check
+ * @param schedule - The work schedule configuration
+ * @returns Current work status
+ */
 const getWorkStatus = (date: Date, schedule: WorkSchedule): WorkStatus => {
   const hours = date.getHours();
   const minutes = date.getMinutes();
@@ -68,6 +79,11 @@ const getWorkStatus = (date: Date, schedule: WorkSchedule): WorkStatus => {
   return 'after-work';
 };
 
+/**
+ * Formats a duration in minutes to a human-readable string
+ * @param totalMinutes - Duration in minutes
+ * @returns Formatted duration string (e.g., "2h 30m", "45m", "3h")
+ */
 const formatDuration = (totalMinutes: number): string => {
   const hours = Math.floor(Math.abs(totalMinutes) / 60);
   const minutes = Math.abs(totalMinutes) % 60;
@@ -77,22 +93,7 @@ const formatDuration = (totalMinutes: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
-  const getDayIndicator = (localDate: Date, referenceDate: Date): string => {
-    const localDay = format(localDate, 'yyyy-MM-dd');
-    const refDay = format(referenceDate, 'yyyy-MM-dd');
-    
-    if (localDay === refDay) return 'Today';
-    
-    const refTomorrow = format(addDays(referenceDate, 1), 'yyyy-MM-dd');
-    if (localDay === refTomorrow) return 'Tomorrow';
-    
-    const refYesterday = format(addDays(referenceDate, -1), 'yyyy-MM-dd');
-    if (localDay === refYesterday) return 'Yesterday';
-    
-    return 'Today';
-  };
-
-  const calculateProgress = (time: Date, schedule: WorkSchedule): ProgressInfo => {
+const calculateProgress = (time: Date, schedule: WorkSchedule): ProgressInfo => {
     const startMinutes = parseTimeToMinutes(schedule.startTime);
     const lunchStartMinutes = parseTimeToMinutes(schedule.lunchStart);
     const lunchEndMinutes = parseTimeToMinutes(schedule.lunchEnd);
@@ -171,6 +172,21 @@ export const useTimezone = () => {
     return settings.showSeconds ? format(date, 'hh:mm:ss a') : format(date, 'hh:mm a');
   }, [settings.use24Hour, settings.showSeconds]);
 
+  const getDayIndicator = useCallback((localDate: Date, referenceDate: Date): string => {
+    const localDay = format(localDate, 'yyyy-MM-dd');
+    const refDay = format(referenceDate, 'yyyy-MM-dd');
+    
+    if (localDay === refDay) return 'Today';
+    
+    const refTomorrow = format(addDays(referenceDate, 1), 'yyyy-MM-dd');
+    if (localDay === refTomorrow) return 'Tomorrow';
+    
+    const refYesterday = format(addDays(referenceDate, -1), 'yyyy-MM-dd');
+    if (localDay === refYesterday) return 'Yesterday';
+    
+    return 'Today';
+  }, []);
+
   const irelandInfo: TimeInfo = useMemo(() => ({
     time: irelandTime,
     formattedTime: formatTimeDisplay(irelandTime),
@@ -185,7 +201,7 @@ export const useTimezone = () => {
     formattedDate: format(puneTime, 'EEEE, dd MMM'),
     dayIndicator: getDayIndicator(puneTime, irelandTime),
     status: getWorkStatus(puneTime, settings.puneSchedule),
-  }), [puneTime, irelandTime, settings.puneSchedule, formatTimeDisplay]);
+  }), [puneTime, irelandTime, formatTimeDisplay, getDayIndicator, settings.puneSchedule]);
 
   const offsetInfo: OffsetInfo = useMemo(() => {
     const diffMinutes = differenceInMinutes(puneTime, irelandTime);
@@ -251,18 +267,11 @@ export const useTimezone = () => {
         const overlapEnd = Math.min(irBlock.end, puBlock.end);
         
         if (overlapStart < overlapEnd) {
-          const irStartStr = `${String(Math.floor(overlapStart / 60)).padStart(2, '0')}:${String(overlapStart % 60).padStart(2, '0')}`;
-          const irEndStr = `${String(Math.floor(overlapEnd / 60)).padStart(2, '0')}:${String(overlapEnd % 60).padStart(2, '0')}`;
-          const puStartMins = overlapStart + offsetMins;
-          const puEndMins = overlapEnd + offsetMins;
-          const puStartStr = `${String(Math.floor(puStartMins / 60)).padStart(2, '0')}:${String(puStartMins % 60).padStart(2, '0')}`;
-          const puEndStr = `${String(Math.floor(puEndMins / 60)).padStart(2, '0')}:${String(puEndMins % 60).padStart(2, '0')}`;
-          
           periods.push({
-            irelandStart: irStartStr,
-            irelandEnd: irEndStr,
-            puneStart: puStartStr,
-            puneEnd: puEndStr,
+            irelandStart: formatMinutesToTimeString(overlapStart),
+            irelandEnd: formatMinutesToTimeString(overlapEnd),
+            puneStart: formatMinutesToTimeString(overlapStart + offsetMins),
+            puneEnd: formatMinutesToTimeString(overlapEnd + offsetMins),
           });
         }
       }

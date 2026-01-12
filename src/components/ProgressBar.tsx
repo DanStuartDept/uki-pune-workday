@@ -11,6 +11,17 @@ interface ProgressBarProps {
   lunchEndPercent: number;
 }
 
+/**
+ * Displays a visual progress bar showing workday progress for a location
+ * @param location - Location identifier ('ireland' or 'pune')
+ * @param percentage - Current progress percentage (0-100)
+ * @param statusText - Primary status text
+ * @param secondaryText - Secondary status text
+ * @param isBeforeWork - Whether current time is before work hours
+ * @param isAfterWork - Whether current time is after work hours
+ * @param lunchStartPercent - Lunch start position as percentage
+ * @param lunchEndPercent - Lunch end position as percentage
+ */
 export const ProgressBar = ({
   location,
   percentage,

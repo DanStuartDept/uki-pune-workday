@@ -16,6 +16,14 @@ const statusConfig: Record<WorkStatus, { label: string; className: string }> = {
   'after-work': { label: 'After Work', className: 'bg-muted text-muted-foreground' },
 };
 
+/**
+ * Displays current time and work status for a timezone location
+ * @param location - Name of the location (e.g., "UKI", "PUNE, INDIA")
+ * @param time - Formatted time string
+ * @param date - Formatted date string
+ * @param dayIndicator - Day indicator (e.g., "Today", "Tomorrow")
+ * @param status - Current work status
+ */
 export const TimeCard = ({ location, time, date, dayIndicator, status }: TimeCardProps) => {
   const statusInfo = statusConfig[status];
 

@@ -20,6 +20,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+/**
+ * Internal component for editing work schedule times
+ * @param title - Schedule title (e.g., "Ireland", "Pune")
+ * @param schedule - Current schedule configuration
+ * @param onUpdate - Callback to update schedule
+ */
 const ScheduleEditor = ({
   title,
   schedule,
@@ -74,13 +80,17 @@ const ScheduleEditor = ({
   );
 };
 
+/**
+ * Settings panel component providing configuration for work schedules, display preferences, and theme
+ * Opens as a side sheet with form controls for all app settings
+ */
 export const SettingsPanel = () => {
   const { settings, updateSettings, updateIrelandSchedule, updatePuneSchedule } = useSettings();
 
   return (
     <Sheet>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="fixed top-4 right-4">
+        <Button variant="outline" size="icon" className="fixed top-4 right-4" aria-label="Open settings">
           <Settings className="h-4 w-4" />
         </Button>
       </SheetTrigger>

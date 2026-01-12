@@ -12,6 +12,13 @@ interface OverlapIndicatorProps {
   nextOverlapMessage?: string;
 }
 
+/**
+ * Displays timezone overlap periods between UKI and Pune work hours
+ * @param hasOverlap - Whether there is remaining overlap today
+ * @param periods - Array of overlap time periods
+ * @param message - Primary message about overlap status
+ * @param nextOverlapMessage - Optional message about next overlap
+ */
 export const OverlapIndicator = ({
   hasOverlap,
   periods,

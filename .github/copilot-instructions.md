@@ -485,6 +485,120 @@ Before committing code changes, verify:
 
 ---
 
+## Pull Request Requirements
+
+### Quality Gates (MANDATORY)
+
+All PRs must pass these quality checks before merging:
+
+1. **Lint Check** - MUST pass without errors
+   ```bash
+   npm run lint
+   ```
+   - 0 errors required
+   - Warnings acceptable only for shadcn/ui fast-refresh patterns
+
+2. **Type Check** - MUST pass without errors
+   ```bash
+   npm run build
+   ```
+   - Build must complete successfully
+   - No TypeScript compilation errors
+
+3. **Manual Testing** - MUST verify functionality
+   - Test changed features in browser
+   - Verify no console errors
+   - Check responsive design (mobile, tablet, desktop)
+
+### Screenshot Requirements (MANDATORY)
+
+**Every PR that changes UI MUST include screenshots.**
+
+#### Full-Page Screenshots
+- Capture entire page with full content visible
+- **DO NOT** cut off content below the fold
+- Use full-page screenshot option to ensure everything is visible
+- Show the complete user interface in context
+
+#### Component-Level Screenshots (Bonus)
+When possible, also include focused screenshots of:
+- Individual components that were modified
+- Specific UI elements that changed
+- Interactive states (hover, active, etc.)
+
+#### How to Capture Screenshots
+
+**Using Playwright (Recommended):**
+```typescript
+// Full page screenshot
+await page.screenshot({ 
+  fullPage: true, 
+  path: 'screenshots/full-page.png' 
+});
+
+// Component screenshot using selector
+await page.locator('[data-testid="time-card"]').screenshot({
+  path: 'screenshots/time-card.png'
+});
+```
+
+**Guidelines:**
+- ✅ Full-page screenshots showing complete interface
+- ✅ Component screenshots showing specific changes
+- ✅ Screenshots at default viewport (1280x720 or similar)
+- ✅ Multiple screenshots for different states if relevant
+- ❌ Cut-off screenshots missing content below fold
+- ❌ Screenshots with only partial UI visible
+
+### PR Description Template
+
+```markdown
+## Changes
+Brief description of what changed
+
+## Quality Checks
+- [x] `npm run lint` - passes with 0 errors
+- [x] `npm run build` - builds successfully
+- [x] Manual testing completed
+- [x] No console errors
+
+## Screenshots
+
+### Full Page View
+![Full page screenshot](url)
+
+### Component Views (if applicable)
+![Component 1](url)
+![Component 2](url)
+
+## Testing Notes
+- Tested feature X
+- Verified responsive design
+- Checked accessibility
+```
+
+### Before Submitting PR
+
+**Required checklist:**
+- [ ] Run `npm run lint` - must pass with 0 errors
+- [ ] Run `npm run build` - must complete successfully  
+- [ ] Test changes in browser
+- [ ] Take full-page screenshots (not cut off)
+- [ ] Take component screenshots (bonus)
+- [ ] Add screenshots to PR description
+- [ ] Add testing notes to PR description
+- [ ] Verify no console errors
+
+**Quality Standards:**
+- Code follows all patterns in this guide
+- TypeScript interfaces defined for all props
+- Performance optimizations applied (useMemo/useCallback)
+- Accessibility requirements met (ARIA labels)
+- Styling uses Tailwind utilities
+- No anti-patterns used
+
+---
+
 ## Anti-Patterns to Avoid
 
 ### ❌ NEVER Do This

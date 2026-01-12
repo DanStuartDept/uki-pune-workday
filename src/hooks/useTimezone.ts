@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { format, differenceInMinutes, differenceInSeconds, addDays, isToday, isTomorrow, isYesterday } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
 import { useSettings, WorkSchedule } from '@/contexts/SettingsContext';
@@ -77,28 +77,6 @@ const formatDuration = (totalMinutes: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
-export const useTimezone = () => {
-  const { settings } = useSettings();
-  const [now, setNow] = useState(new Date());
-
-  useEffect(() => {
-    const interval = setInterval(
-      () => setNow(new Date()),
-      settings.updateFrequency === 'smooth' ? 1000 : 60000
-    );
-    return () => clearInterval(interval);
-  }, [settings.updateFrequency]);
-
-  const irelandTime = useMemo(() => toZonedTime(now, IRELAND_TZ), [now]);
-  const puneTime = useMemo(() => toZonedTime(now, PUNE_TZ), [now]);
-
-  const formatTimeDisplay = (date: Date): string => {
-    if (settings.use24Hour) {
-      return settings.showSeconds ? format(date, 'HH:mm:ss') : format(date, 'HH:mm');
-    }
-    return settings.showSeconds ? format(date, 'hh:mm:ss a') : format(date, 'hh:mm a');
-  };
-
   const getDayIndicator = (localDate: Date, referenceDate: Date): string => {
     const localDay = format(localDate, 'yyyy-MM-dd');
     const refDay = format(referenceDate, 'yyyy-MM-dd');
@@ -113,37 +91,6 @@ export const useTimezone = () => {
     
     return 'Today';
   };
-
-  const irelandInfo: TimeInfo = useMemo(() => ({
-    time: irelandTime,
-    formattedTime: formatTimeDisplay(irelandTime),
-    formattedDate: format(irelandTime, 'EEEE, dd MMM'),
-    dayIndicator: 'Today',
-    status: getWorkStatus(irelandTime, settings.irelandSchedule),
-  }), [irelandTime, settings.use24Hour, settings.showSeconds, settings.irelandSchedule]);
-
-  const puneInfo: TimeInfo = useMemo(() => ({
-    time: puneTime,
-    formattedTime: formatTimeDisplay(puneTime),
-    formattedDate: format(puneTime, 'EEEE, dd MMM'),
-    dayIndicator: getDayIndicator(puneTime, irelandTime),
-    status: getWorkStatus(puneTime, settings.puneSchedule),
-  }), [puneTime, irelandTime, settings.use24Hour, settings.showSeconds, settings.puneSchedule]);
-
-  const offsetInfo: OffsetInfo = useMemo(() => {
-    const diffMinutes = differenceInMinutes(puneTime, irelandTime);
-    const hours = Math.floor(Math.abs(diffMinutes) / 60);
-    const minutes = Math.abs(diffMinutes) % 60;
-    
-    let text = '';
-    if (minutes === 0) {
-      text = `Pune is ${hours} hour${hours !== 1 ? 's' : ''} ahead of UKI`;
-    } else {
-      text = `Pune is ${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''} ahead of UKI`;
-    }
-    
-    return { hours, minutes, text };
-  }, [puneTime, irelandTime]);
 
   const calculateProgress = (time: Date, schedule: WorkSchedule): ProgressInfo => {
     const startMinutes = parseTimeToMinutes(schedule.startTime);
@@ -201,6 +148,59 @@ export const useTimezone = () => {
       lunchEndPercent,
     };
   };
+
+export const useTimezone = () => {
+  const { settings } = useSettings();
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(
+      () => setNow(new Date()),
+      settings.updateFrequency === 'smooth' ? 1000 : 60000
+    );
+    return () => clearInterval(interval);
+  }, [settings.updateFrequency]);
+
+  const irelandTime = useMemo(() => toZonedTime(now, IRELAND_TZ), [now]);
+  const puneTime = useMemo(() => toZonedTime(now, PUNE_TZ), [now]);
+
+  const formatTimeDisplay = useCallback((date: Date): string => {
+    if (settings.use24Hour) {
+      return settings.showSeconds ? format(date, 'HH:mm:ss') : format(date, 'HH:mm');
+    }
+    return settings.showSeconds ? format(date, 'hh:mm:ss a') : format(date, 'hh:mm a');
+  }, [settings.use24Hour, settings.showSeconds]);
+
+  const irelandInfo: TimeInfo = useMemo(() => ({
+    time: irelandTime,
+    formattedTime: formatTimeDisplay(irelandTime),
+    formattedDate: format(irelandTime, 'EEEE, dd MMM'),
+    dayIndicator: 'Today',
+    status: getWorkStatus(irelandTime, settings.irelandSchedule),
+  }), [irelandTime, settings.irelandSchedule, formatTimeDisplay]);
+
+  const puneInfo: TimeInfo = useMemo(() => ({
+    time: puneTime,
+    formattedTime: formatTimeDisplay(puneTime),
+    formattedDate: format(puneTime, 'EEEE, dd MMM'),
+    dayIndicator: getDayIndicator(puneTime, irelandTime),
+    status: getWorkStatus(puneTime, settings.puneSchedule),
+  }), [puneTime, irelandTime, settings.puneSchedule, formatTimeDisplay]);
+
+  const offsetInfo: OffsetInfo = useMemo(() => {
+    const diffMinutes = differenceInMinutes(puneTime, irelandTime);
+    const hours = Math.floor(Math.abs(diffMinutes) / 60);
+    const minutes = Math.abs(diffMinutes) % 60;
+    
+    let text = '';
+    if (minutes === 0) {
+      text = `Pune is ${hours} hour${hours !== 1 ? 's' : ''} ahead of UKI`;
+    } else {
+      text = `Pune is ${hours} hour${hours !== 1 ? 's' : ''} ${minutes} minute${minutes !== 1 ? 's' : ''} ahead of UKI`;
+    }
+    
+    return { hours, minutes, text };
+  }, [puneTime, irelandTime]);
 
   const irelandProgress: ProgressInfo = useMemo(() => 
     calculateProgress(irelandTime, settings.irelandSchedule), 

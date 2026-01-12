@@ -1,6 +1,7 @@
-import { useSettings } from '@/contexts/SettingsContext';
+import { useSettings, WorkSchedule } from '@/contexts/SettingsContext';
 
 interface ProgressBarProps {
+  location: 'ireland' | 'pune';
   percentage: number;
   statusText: string;
   secondaryText: string;
@@ -11,6 +12,7 @@ interface ProgressBarProps {
 }
 
 export const ProgressBar = ({
+  location,
   percentage,
   statusText,
   secondaryText,
@@ -20,12 +22,13 @@ export const ProgressBar = ({
   lunchEndPercent,
 }: ProgressBarProps) => {
   const { settings } = useSettings();
-  const schedule = settings.puneSchedule;
+  const schedule = location === 'ireland' ? settings.irelandSchedule : settings.puneSchedule;
+  const title = location === 'ireland' ? 'Ireland Workday Progress' : 'Pune Workday Progress';
 
   return (
     <div className="w-full p-6 border border-border rounded-lg bg-card">
       <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground mb-4">
-        Pune Workday Progress
+        {title}
       </h3>
       
       {/* Progress bar container */}

@@ -11,6 +11,7 @@ const Dashboard = () => {
     irelandInfo,
     puneInfo,
     offsetInfo,
+    irelandProgress,
     puneProgress,
     overlapInfo,
     messageIndicator,
@@ -48,8 +49,19 @@ const Dashboard = () => {
         {/* Message Indicator */}
         <MessageIndicator text={messageIndicator.text} type={messageIndicator.type} />
 
-        {/* Progress Bar */}
+        {/* Progress Bars */}
         <ProgressBar
+          location="ireland"
+          percentage={irelandProgress.percentage}
+          statusText={irelandProgress.statusText}
+          secondaryText={irelandProgress.secondaryText}
+          isBeforeWork={irelandProgress.isBeforeWork}
+          isAfterWork={irelandProgress.isAfterWork}
+          lunchStartPercent={irelandProgress.lunchStartPercent}
+          lunchEndPercent={irelandProgress.lunchEndPercent}
+        />
+        <ProgressBar
+          location="pune"
           percentage={puneProgress.percentage}
           statusText={puneProgress.statusText}
           secondaryText={puneProgress.secondaryText}

@@ -12,7 +12,8 @@ updates:
           - "@radix-ui/*"
       react:
         patterns:
-          - "react*"
+          - "react"
+          - "react-*"
       types:
         patterns:
           - "@types/*"

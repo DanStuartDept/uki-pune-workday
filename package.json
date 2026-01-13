@@ -8,15 +8,16 @@
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
+    "lint:fix" : "eslint . --fix",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006 --ci",
     "build-storybook": "storybook build",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test-interaction": "vitest run --project=storybook",
     "test-interaction:coverage": "vitest run --project=storybook --coverage",
-    "test-interaction:watch": "vitest watch --project=storybook --coverage",
-    "test:coverage": "vitest run --coverage"
+    "test-interaction:watch": "vitest watch --project=storybook --coverage"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

@@ -93,6 +93,17 @@ const formatDuration = (totalMinutes: number): string => {
   return `${hours}h ${minutes}m`;
 };
 
+/**
+ * Formats minutes since midnight to a time string (HH:mm)
+ * @param minutes - Minutes since midnight
+ * @returns Formatted time string (e.g., "09:30", "14:00")
+ */
+const formatMinutesToTimeString = (minutes: number): string => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+};
+
 const calculateProgress = (time: Date, schedule: WorkSchedule): ProgressInfo => {
     const startMinutes = parseTimeToMinutes(schedule.startTime);
     const lunchStartMinutes = parseTimeToMinutes(schedule.lunchStart);

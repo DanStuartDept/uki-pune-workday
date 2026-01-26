@@ -37,7 +37,7 @@ const defaultSettings: Settings = {
   },
   use24Hour: true,
   showSeconds: false,
-  theme: 'light',
+  theme: 'system',
   updateFrequency: 'standard',
 };
 

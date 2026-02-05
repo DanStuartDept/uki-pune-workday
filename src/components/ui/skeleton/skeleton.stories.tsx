@@ -1,0 +1,34 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { Skeleton } from './skeleton';
+
+/**
+ * Skeleton component for loading placeholders.
+ * Shows placeholder content while data is loading.
+ */
+const meta = {
+  title: 'UI/Skeleton',
+  component: Skeleton,
+  tags: ['autodocs'],
+  parameters: { layout: 'padded' },
+} satisfies Meta<typeof Skeleton>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/** Single skeleton */
+export const Default: Story = {
+  render: () => <Skeleton className="h-12 w-12 rounded-full" />,
+};
+
+/** Card skeleton pattern */
+export const Card: Story = {
+  render: () => (
+    <div className="flex items-center space-x-4">
+      <Skeleton className="h-12 w-12 rounded-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    </div>
+  ),
+};
